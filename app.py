@@ -1,7 +1,10 @@
 import streamlit as st
 import cv2
 import numpy as np
+import joblib
 import os
+
+model = joblib.load("weed_model.pkl")
 
 st.set_page_config(page_title="Crop Health Monitor", layout="wide")
 
@@ -32,6 +35,11 @@ ndvi_mean = ndvi.mean()
 ndvi_std = ndvi.std()
 ndwi_mean = ndwi.mean()
 
+# --- ML model prediction ---
+features = [[ndvi_mean, ndvi_std, ndwi_mean, brightness]]
+ml_prediction = model.predict(features)[0]
+ml_confidence = model.predict_proba(features)[0][ml_prediction]
+
 # --- Classification functions ---
 def classify_health(m):
     if m >= 0.4: return "🟢 Healthy"
@@ -60,7 +68,10 @@ with col2:
     st.image(ndvi_colored, use_container_width=True)
 
 st.divider()
-c1, c2, c3 = st.columns(3)
+c1, c2, c3, c4 = st.columns(4)
 c1.metric("Crop Health", classify_health(ndvi_mean), f"NDVI: {ndvi_mean:.3f}")
 c2.metric("Soil Condition", classify_soil(ndwi_mean, brightness), f"NDWI: {ndwi_mean:.3f}")
-c3.metric("Pest Risk", classify_pest(ndvi_mean, ndvi_std), f"Patchiness: {ndvi_std:.3f}")
+c3.metric("Pest Risk (rule-based)", classify_pest(ndvi_mean, ndvi_std), f"Patchiness: {ndvi_std:.3f}")
+
+weed_label = "🐛 Weed Detected" if ml_prediction == 1 else "✅ No Weed"
+c4.metric("ML Model Prediction", weed_label, f"Confidence: {ml_confidence:.1%}")
