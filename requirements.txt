@@ -1,0 +1,8 @@
+rasterio
+opencv-python
+numpy
+scikit-learn
+matplotlib
+jupyter
+pandas
+streamlit
