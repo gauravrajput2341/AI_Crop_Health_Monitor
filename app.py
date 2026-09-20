@@ -75,3 +75,5 @@ c3.metric("Pest Risk (rule-based)", classify_pest(ndvi_mean, ndvi_std), f"Patchi
 
 weed_label = "🐛 Weed Detected" if ml_prediction == 1 else "✅ No Weed"
 c4.metric("ML Model Prediction", weed_label, f"Confidence: {ml_confidence:.1%}")
+if ml_confidence < 0.65:
+    st.warning("⚠️ Low confidence prediction — manual review recommended")
