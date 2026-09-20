@@ -137,4 +137,6 @@ AI Crop Health/
 
 ## Team
 
-- [Add team member names and roles here]
+- Gaurav Kumar
+- Astitiva Goswami
+- Anisha Srivastava
